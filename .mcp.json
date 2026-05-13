@@ -3,9 +3,11 @@
   "mcpServers": {
     "bookstore": {
       "command": "python3",
-      "args": ["services/mcp-skill/server.py"],
+      "args": [
+        "services/mcp-skill/server.py"
+      ],
       "env": {
-        "MCP_API_ENDPOINT": "http://72a6d223.execute-api.localhost.localstack.cloud:4566",
+        "MCP_API_ENDPOINT": "http://4341996c.execute-api.localhost.localstack.cloud:4566",
         "ORDER_SERVICE_URL": "http://localhost:5001",
         "AWS_ENDPOINT_URL": "http://localhost:4566",
         "AWS_DEFAULT_REGION": "us-east-1",
