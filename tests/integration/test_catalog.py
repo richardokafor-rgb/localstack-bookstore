@@ -16,7 +16,6 @@ def test_create_book(api_endpoint, sample_book):
     assert "bookId" in data
     assert data["title"] == sample_book["title"]
     assert data["genre"] == sample_book["genre"]
-    return data
 
 
 def test_get_book(api_endpoint, sample_book):
