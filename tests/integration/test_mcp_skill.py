@@ -15,8 +15,25 @@ import time
 import pytest
 import requests
 
-# ── env vars must be set before the server module is imported ─────────────────
-API_ENDPOINT = "http://f71901c1.execute-api.localhost.localstack.cloud:4566"
+# ── resolve the API endpoint dynamically so tests survive LocalStack restarts ─
+def _resolve_api_endpoint() -> str:
+    """Look up the live API GW endpoint by name rather than hardcoding the ID."""
+    import boto3
+    endpoint = os.environ.get("AWS_ENDPOINT_URL", "http://localhost:4566")
+    client = boto3.client(
+        "apigatewayv2",
+        endpoint_url=endpoint,
+        region_name=os.environ.get("AWS_DEFAULT_REGION", "us-east-1"),
+        aws_access_key_id="test",
+        aws_secret_access_key="test",
+    )
+    apis = client.get_apis()["Items"]
+    api = next((a for a in apis if "bookstore-catalog" in a["Name"]), None)
+    assert api, "Catalog API not found — run tflocal apply first"
+    return f"http://{api['ApiId']}.execute-api.localhost.localstack.cloud:4566"
+
+
+API_ENDPOINT = _resolve_api_endpoint()
 ORDER_SERVICE_URL = "http://localhost:5001"
 
 os.environ["MCP_API_ENDPOINT"] = API_ENDPOINT

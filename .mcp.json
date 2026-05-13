@@ -1,10 +1,11 @@
 {
+  "_comment": "MCP_API_ENDPOINT changes after every LocalStack restart. Run `make -C infrastructure output` to get the current api_endpoint, then update this file, or run `./infrastructure/scripts/update-mcp-config.sh`.",
   "mcpServers": {
     "bookstore": {
       "command": "python3",
       "args": ["services/mcp-skill/server.py"],
       "env": {
-        "MCP_API_ENDPOINT": "http://f71901c1.execute-api.localhost.localstack.cloud:4566",
+        "MCP_API_ENDPOINT": "http://72a6d223.execute-api.localhost.localstack.cloud:4566",
         "ORDER_SERVICE_URL": "http://localhost:5001",
         "AWS_ENDPOINT_URL": "http://localhost:4566",
         "AWS_DEFAULT_REGION": "us-east-1",
