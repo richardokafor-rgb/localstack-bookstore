@@ -1,0 +1,20 @@
+{
+  "name": "catalog-api",
+  "version": "1.0.0",
+  "description": "Bookstore catalog Lambda handler",
+  "main": "src/handlers/books.js",
+  "scripts": {
+    "build": "npm ci --production",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/lib-dynamodb": "^3.600.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
