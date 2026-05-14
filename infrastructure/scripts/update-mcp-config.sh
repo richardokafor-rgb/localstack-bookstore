@@ -26,3 +26,11 @@ with open(path, "w") as f:
 EOF
 
 echo "Updated .mcp.json → MCP_API_ENDPOINT=$API_ENDPOINT"
+
+# Write frontend/.env.local so `npm run dev` picks up the endpoint automatically
+ENV_LOCAL="$REPO_ROOT/frontend/.env.local"
+cat > "$ENV_LOCAL" <<ENVEOF
+VITE_API_ENDPOINT=$API_ENDPOINT
+VITE_ORDER_SERVICE_URL=http://localhost:5001
+ENVEOF
+echo "Updated frontend/.env.local → VITE_API_ENDPOINT=$API_ENDPOINT"

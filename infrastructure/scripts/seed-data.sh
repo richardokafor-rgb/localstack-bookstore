@@ -5,6 +5,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TF_DIR="$SCRIPT_DIR/../terraform"
 API_ENDPOINT=$(cd "$TF_DIR" && tflocal output -raw api_endpoint 2>/dev/null || echo "http://localhost:4566")
 
+echo "==> Clearing existing items from local-books table…"
+items=$(awslocal dynamodb scan \
+  --table-name local-books \
+  --projection-expression "bookId" \
+  --query "Items[].bookId.S" \
+  --output text 2>/dev/null || true)
+for book_id in $items; do
+  awslocal dynamodb delete-item \
+    --table-name local-books \
+    --key "{\"bookId\":{\"S\":\"$book_id\"}}" 2>/dev/null || true
+done
+echo "   cleared."
+
 echo "==> Seeding books via $API_ENDPOINT/books"
 
 books=(

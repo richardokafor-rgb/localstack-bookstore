@@ -7,7 +7,7 @@
         "services/mcp-skill/server.py"
       ],
       "env": {
-        "MCP_API_ENDPOINT": "http://4341996c.execute-api.localhost.localstack.cloud:4566",
+        "MCP_API_ENDPOINT": "http://b2ac6f3d.execute-api.localhost.localstack.cloud:4566",
         "ORDER_SERVICE_URL": "http://localhost:5001",
         "AWS_ENDPOINT_URL": "http://localhost:4566",
         "AWS_DEFAULT_REGION": "us-east-1",

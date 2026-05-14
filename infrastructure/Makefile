@@ -35,3 +35,4 @@ reset: nuke
 	cd $(REPO_ROOT)/services/catalog-api && npm install --production --silent
 	cd $(TF_DIR) && tflocal apply -auto-approve
 	bash $(SCRIPTS)/update-mcp-config.sh
+	bash $(SCRIPTS)/seed-data.sh
