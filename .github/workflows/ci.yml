@@ -30,6 +30,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 15
+          -v /var/run/docker.sock:/var/run/docker.sock
 
     steps:
       - uses: actions/checkout@v4
@@ -84,6 +85,7 @@ jobs:
         env:
           LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
           EAGER_SERVICE_LOADING: 1
+          DOCKER_HOST: unix:///var/run/docker.sock
         ports:
           - 4566:4566
         options: >-
@@ -91,6 +93,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 15
+          -v /var/run/docker.sock:/var/run/docker.sock
 
     steps:
       - uses: actions/checkout@v4
@@ -138,6 +141,8 @@ jobs:
         image: localstack/localstack-pro:latest
         env:
           LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+          EAGER_SERVICE_LOADING: 1
+          DOCKER_HOST: unix:///var/run/docker.sock
         ports:
           - 4566:4566
         options: >-
@@ -145,6 +150,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 15
+          -v /var/run/docker.sock:/var/run/docker.sock
 
     steps:
       - uses: actions/checkout@v4
