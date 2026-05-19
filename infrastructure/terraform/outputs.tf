@@ -40,3 +40,7 @@ output "books_table" {
 output "orders_table" {
   value = module.dynamodb.orders_table_name
 }
+
+output "users_table" {
+  value = module.dynamodb.users_table_name
+}

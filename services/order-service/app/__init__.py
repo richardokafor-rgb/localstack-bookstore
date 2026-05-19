@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from flask import Flask
 from flask.json.provider import DefaultJSONProvider
+from flask_cors import CORS
 
 
 class DecimalJSONProvider(DefaultJSONProvider):
@@ -15,6 +16,7 @@ def create_app():
     app = Flask(__name__)
     app.json_provider_class = DecimalJSONProvider
     app.json = DecimalJSONProvider(app)
+    CORS(app)
 
     from .routes import bp
     app.register_blueprint(bp)

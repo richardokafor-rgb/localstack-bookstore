@@ -2,7 +2,7 @@ TF_DIR    := $(CURDIR)/terraform
 SCRIPTS   := $(CURDIR)/scripts
 REPO_ROOT := $(CURDIR)/..
 
-.PHONY: init plan apply destroy output reset nuke
+.PHONY: init plan apply destroy output reset nuke pod-save pod-load pod-list start-order-service
 
 init:
 	cd $(TF_DIR) && tflocal init -input=false
@@ -22,6 +22,23 @@ output:
 # Delete every bookstore resource from LocalStack (idempotent, safe to re-run)
 nuke:
 	bash $(SCRIPTS)/nuke.sh
+
+# Start the Flask order service locally on port 5001 (reads env vars from Terraform outputs)
+start-order-service:
+	bash $(SCRIPTS)/start-order-service.sh
+
+# Snapshot the current LocalStack state (infrastructure + data) into a Cloud Pod
+pod-save:
+	localstack pod save bookstore-dev
+
+# Load a saved Cloud Pod and refresh local config files
+pod-load:
+	localstack pod load bookstore-dev --strategy overwrite
+	bash $(SCRIPTS)/update-mcp-config.sh
+
+# List all available Cloud Pods
+pod-list:
+	localstack pod list
 
 # Full reset after a LocalStack restart:
 #   1. nuke  — wipe all persisted resources from LocalStack
