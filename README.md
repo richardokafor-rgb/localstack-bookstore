@@ -67,19 +67,13 @@ make reset
 make start-order-service
 
 # 4. Open the app
-```
 
-The frontend is deployed to LocalStack CloudFront/S3 as part of `make reset`. Get the URL:
+# CloudFront/S3 (production build):
+open http://local-bookstore-frontend.s3-website.localhost.localstack.cloud:4566
 
-```bash
-cd infrastructure && make output   # prints cloudfront_url
-```
-
-Or run the Vite dev server for hot-reload development:
-
-```bash
+# Or Vite dev server (hot reload):
 cd ../frontend && npm install && npm run dev
-# → http://localhost:5173
+# then open http://localhost:5173
 ```
 
 ---
