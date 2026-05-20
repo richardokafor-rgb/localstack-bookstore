@@ -218,9 +218,10 @@ All targets run from the `infrastructure/` directory.
 | Target | Description |
 |--------|-------------|
 | `make reset` | Full redeploy: nuke → init → apply → seed (~60–90 s) |
+| `make deploy-frontend` | Build React app and sync `dist/` to S3/CloudFront |
 | `make start-order-service` | Start the Flask order service locally on port 5001 |
 | `make pod-save` | Snapshot current LocalStack state as `bookstore-dev` |
-| `make pod-load` | Restore `bookstore-dev` snapshot and refresh local config |
+| `make pod-load` | Restore `bookstore-dev` snapshot, refresh config, deploy frontend |
 | `make pod-list` | List all available Cloud Pods |
 | `make init` | `terraform init` |
 | `make plan` | `terraform plan` |

@@ -2,7 +2,7 @@ TF_DIR    := $(CURDIR)/terraform
 SCRIPTS   := $(CURDIR)/scripts
 REPO_ROOT := $(CURDIR)/..
 
-.PHONY: init plan apply destroy output reset nuke pod-save pod-load pod-list start-order-service
+.PHONY: init plan apply destroy output reset nuke pod-save pod-load pod-list start-order-service deploy-frontend
 
 init:
 	cd $(TF_DIR) && tflocal init -input=false
@@ -23,6 +23,10 @@ output:
 nuke:
 	bash $(SCRIPTS)/nuke.sh
 
+# Build the React app and sync dist/ to the LocalStack S3/CloudFront bucket
+deploy-frontend:
+	bash $(SCRIPTS)/deploy-frontend.sh
+
 # Start the Flask order service locally on port 5001 (reads env vars from Terraform outputs)
 start-order-service:
 	bash $(SCRIPTS)/start-order-service.sh
@@ -35,6 +39,7 @@ pod-save:
 pod-load:
 	localstack pod load bookstore-dev --strategy overwrite
 	bash $(SCRIPTS)/update-mcp-config.sh
+	bash $(SCRIPTS)/deploy-frontend.sh
 
 # List all available Cloud Pods
 pod-list:
