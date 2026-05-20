@@ -13,6 +13,11 @@ output "cloudfront_domain" {
   value       = module.frontend.cloudfront_domain_name
 }
 
+output "cloudfront_url" {
+  description = "Full URL of the frontend served via CloudFront"
+  value       = "http://${module.frontend.cloudfront_domain_name}"
+}
+
 output "order_queue_url" {
   description = "SQS order queue URL"
   value       = module.order_service.order_queue_url

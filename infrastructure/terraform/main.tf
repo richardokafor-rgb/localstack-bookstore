@@ -39,8 +39,9 @@ module "dynamodb" {
 }
 
 module "frontend" {
-  source      = "./modules/frontend"
-  environment = var.environment
+  source       = "./modules/frontend"
+  environment  = var.environment
+  api_endpoint = module.catalog_api.api_endpoint
 }
 
 module "catalog_api" {

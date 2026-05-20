@@ -37,6 +37,10 @@ resource "aws_s3_bucket_policy" "frontend" {
   })
 }
 
+locals {
+  frontend_dir = "${path.root}/../../frontend"
+}
+
 resource "aws_cloudfront_distribution" "frontend" {
   enabled             = true
   default_root_object = "index.html"
@@ -90,5 +94,39 @@ resource "aws_cloudfront_distribution" "frontend" {
 
   tags = {
     Name = "${var.environment}-bookstore-cdn"
+  }
+}
+
+# Build the React app and upload dist/ to S3 whenever the API endpoint or
+# source files change.
+resource "null_resource" "frontend_deploy" {
+  depends_on = [
+    aws_s3_bucket_policy.frontend,
+    aws_cloudfront_distribution.frontend,
+  ]
+
+  triggers = {
+    api_endpoint = var.api_endpoint
+    src_hash = sha256(join("", [
+      filesha256("${local.frontend_dir}/src/App.jsx"),
+      filesha256("${local.frontend_dir}/src/api/client.js"),
+      filesha256("${local.frontend_dir}/package.json"),
+    ]))
+  }
+
+  provisioner "local-exec" {
+    working_dir = local.frontend_dir
+    environment = {
+      VITE_API_ENDPOINT      = var.api_endpoint
+      VITE_ORDER_SERVICE_URL = "http://localhost:5001"
+    }
+    command = <<-EOT
+      set -e
+      npm install --silent
+      npm run build
+      awslocal s3 sync dist/ s3://${aws_s3_bucket.frontend.id}/ --delete
+      awslocal s3 cp dist/index.html s3://${aws_s3_bucket.frontend.id}/index.html \
+        --content-type text/html --cache-control "no-cache, no-store"
+    EOT
   }
 }
