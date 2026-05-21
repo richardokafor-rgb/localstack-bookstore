@@ -31,8 +31,9 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [tab, setTab] = useState("catalog");
-  const [orderResult, setOrderResult] = useState(null);
-  const [userId] = useState(`user-${Math.random().toString(36).slice(2, 8)}`);
+  const [userOrders, setUserOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [userId] = useState("akuthegreat");
 
   useEffect(() => {
     catalog.list()
@@ -41,13 +42,23 @@ export default function App() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (tab !== "orders") return;
+    setOrdersLoading(true);
+    orders.list(userId)
+      .then((data) => setUserOrders(
+        [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      ))
+      .catch((e) => setError(e.message))
+      .finally(() => setOrdersLoading(false));
+  }, [tab]);
+
   async function handleOrder(book) {
     try {
-      const order = await orders.place({
+      await orders.place({
         userId,
         items: [{ bookId: book.bookId, title: book.title, quantity: 1, price: book.price }],
       });
-      setOrderResult(order);
       setTab("orders");
     } catch (e) {
       setError(e.message);
@@ -84,16 +95,33 @@ export default function App() {
 
       {tab === "orders" && (
         <>
-          <h2>Orders</h2>
-          {orderResult ? (
-            <div style={styles.card}>
-              <strong>Order placed!</strong>
-              <div>ID: {orderResult.orderId}</div>
-              <div>Status: {orderResult.status}</div>
-              <div>Total: ${Number(orderResult.totalAmount).toFixed(2)}</div>
-            </div>
+          <h2>Orders for {userId}</h2>
+          {ordersLoading ? <p>Loading…</p> : userOrders.length === 0 ? (
+            <p>No orders yet — place one from the Catalog tab.</p>
           ) : (
-            <p>Place an order from the Catalog tab.</p>
+            <div style={styles.grid}>
+              {userOrders.map((o) => (
+                <div key={o.orderId} style={styles.card}>
+                  <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>
+                    {o.orderId.slice(0, 8)}…
+                  </div>
+                  <strong>{o.items?.map((i) => i.title).join(", ")}</strong>
+                  <div style={{ marginTop: 4 }}>
+                    <span style={{
+                      fontSize: 12, padding: "2px 6px", borderRadius: 4,
+                      background: o.status === "PENDING" ? "#fff3cd" : "#d4edda",
+                      color: o.status === "PENDING" ? "#856404" : "#155724",
+                    }}>{o.status}</span>
+                  </div>
+                  <div style={{ fontSize: 13, marginTop: 6 }}>
+                    ${Number(o.totalAmount).toFixed(2)}
+                  </div>
+                  <div style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>
+                    {new Date(o.createdAt).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </>
       )}
